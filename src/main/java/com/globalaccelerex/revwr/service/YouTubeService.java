@@ -45,7 +45,6 @@ public class YouTubeService {
     String apiKey;
 
     public List<Comment> getComments(String videoId) throws Exception {
-        logger.info("Key is >> " + apiKey);
         youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(),
                 (request) -> {
                 }).setApplicationName("revr").build();
