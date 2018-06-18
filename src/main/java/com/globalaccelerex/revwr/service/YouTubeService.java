@@ -5,6 +5,7 @@
  */
 package com.globalaccelerex.revwr.service;
 
+import com.globalaccelerex.revwr.controller.RevwrController;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -17,6 +18,9 @@ import com.google.api.services.youtube.model.Comment;
 import com.google.api.services.youtube.model.CommentThread;
 import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
@@ -25,6 +29,8 @@ import com.google.common.collect.Lists;
 @Service
 public class YouTubeService {
 
+    Logger logger = LoggerFactory.getLogger(YouTubeService.class);
+    
     private static YouTube youtube;
     public static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     public static final JsonFactory JSON_FACTORY = new JacksonFactory();
@@ -34,9 +40,12 @@ public class YouTubeService {
     int counter;
 
     List<Comment> comments = Lists.newArrayList();
+    
+    @Value("${youtube.api.key}")
+    String apiKey;
 
     public List<Comment> getComments(String videoId) throws Exception {
-
+        logger.info("Key is >> " + apiKey);
         youtube = new YouTube.Builder(new NetHttpTransport(), new JacksonFactory(),
                 (request) -> {
                 }).setApplicationName("revr").build();
@@ -61,7 +70,7 @@ public class YouTubeService {
     private YouTube.Comments.List prepareCommentReply(String parentId) throws Exception {
         return youtube.comments()
                 .list("snippet")
-                .setKey("AIzaSyCpx4hR1CHukFgtbezZ-NiniispsTfhfXA")
+                .setKey(apiKey)
                 .setParentId(parentId)
                 .setMaxResults(100L)
                 .setTextFormat("plainText");
@@ -70,7 +79,7 @@ public class YouTubeService {
     private YouTube.CommentThreads.List prepareListRequest(String videoId) throws Exception {
         return youtube.commentThreads()
                 .list("snippet,replies")
-                .setKey("AIzaSyCpx4hR1CHukFgtbezZ-NiniispsTfhfXA")
+                .setKey(apiKey)
                 .setVideoId(videoId)
                 .setMaxResults(100L)
                 .setTextFormat("plainText");
