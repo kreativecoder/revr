@@ -27,3 +27,8 @@ code {
   font-size: 80%;
 }
 
+.navbar-brand{
+    padding-left: 60px;
+    float: none;
+}
+
